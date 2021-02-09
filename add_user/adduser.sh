@@ -8,8 +8,10 @@ echo $venv
 }
 adduser()
 {
+parent_dir=$(dirname "$0")
+py_dir="$parent_dir/add_user.py"
 pip3 -q install psycopg2-binary pypinyin
-python3 ./add_user.py "$@"
+python3 $py_dir "$@"
 }
 
 
