@@ -63,7 +63,7 @@ class UserLib:
         except PermissionError:
             print("Permission error, please switch to user Startalk.")
         except FileNotFoundError:
-            print("Config file not found in {}, please input setting ... ".format(ejabberd_config_location))
+            print("Config file not found in {}, please input setting ... ".format(ejab_conf))
             # pg_host = str(input("请输入PG地址,默认为 127.0.0.1:") or "127.0.0.1")
             # pg_database = str(input("请输入PG数据库名称, 默认为 ejabberd: ") or "ejabberd")
             # pg_user = str(input("请输入PG用户, 默认为 ejabberd: ") or "ejabberd")
