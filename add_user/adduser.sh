@@ -2,7 +2,7 @@
 set -e
 venv="/startalk/search/venv/bin/activate"
 setenv(){
-echo "使用python 环境: "  ${venv}
+echo "Using python virtualenv: "  ${venv}
 source $venv
 echo $venv
 }

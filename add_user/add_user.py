@@ -61,14 +61,20 @@ class UserLib:
                 ejabberd_cfg = f.read()
                 pg_config = self.get_pg_config(ejabberd_cfg)
         except PermissionError:
-            print("无法从配置文件连接PG， 请切换至startalk用户执行脚本")
+            print("Permission error, please switch to user Startalk.")
         except FileNotFoundError:
-            print("无法获取配置文件 , 请手动输入".format(ejabberd_config_location))
-            pg_host = str(input("请输入PG地址,默认为 127.0.0.1:") or "127.0.0.1")
-            pg_database = str(input("请输入PG数据库名称, 默认为 ejabberd: ") or "ejabberd")
-            pg_user = str(input("请输入PG用户, 默认为 ejabberd: ") or "ejabberd")
-            pg_pwd = str(input("请输入PG密码, 默认为 123456: ") or "123456")
-            pg_port = str(input("请输入PG端口, 默认为 5432: ") or "5432")
+            print("Config file not found in {}, please input setting ... ".format(ejabberd_config_location))
+            # pg_host = str(input("请输入PG地址,默认为 127.0.0.1:") or "127.0.0.1")
+            # pg_database = str(input("请输入PG数据库名称, 默认为 ejabberd: ") or "ejabberd")
+            # pg_user = str(input("请输入PG用户, 默认为 ejabberd: ") or "ejabberd")
+            # pg_pwd = str(input("请输入PG密码, 默认为 123456: ") or "123456")
+            # pg_port = str(input("请输入PG端口, 默认为 5432: ") or "5432")
+            pg_host = str(input("Please input Postgres host, deafult is 127.0.0.1:") or "127.0.0.1")
+            pg_database = str(input("Please input Postgres database name, deafult is ejabberd: ") or "ejabberd")
+            pg_user = str(input("Please input Postgres user, default is ejabberd: ") or "ejabberd")
+            pg_pwd = str(input("Please input {user}'s password, default is 123456: ".format(user=pg_user)) or "123456")
+            pg_port = str(input("Please input Postgres port, default is 5432: ") or "5432")
+
             pg_config = dict(host=pg_host, database=pg_database, user=pg_user, password=pg_pwd, port=pg_port)
         self.conn = psycopg2.connect(host=pg_config['host'], database=pg_config['database'], user=pg_config['user'],
                                      password=pg_config['password'], port=pg_config['port'])
@@ -119,9 +125,9 @@ if __name__ == '__main__':
             parse.add_argument('-e', '--virtualenv', help='use an existed python enviroment')
             parse.add_argument('-d', '--default',
                                help="create a new user with\n"
-                                    "userid: testuser\n"
-                                    "username:testuser\n"
-                                    "password:testpassword\n")
+                                    "userid: {id}\n"
+                                    "username:{name}\n"
+                                    "password:{pwd}\n".format(id=DEFAULT_USER, name=DEFAULT_NAME, pwd=DEFAULT_PWD))
             parse.add_argument('-c', '--config',
                                help='specify ejabberd config file for getting postgres config, otherwise you need to input setting Interactively')
             parse.add_argument('hostid')
@@ -141,10 +147,14 @@ if __name__ == '__main__':
                 password = cargs.pwd
 
     else:  # 交互
-        host_id = int(input("这是您的第几个域(host_id)？默认为 1:") or 1)
-        user_id = str(input("请输入新用户的id, 默认为 testuser: ") or "testuser")
-        user_name = str(input("请输入新用户的名称, 默认为 testuser: ") or "testuser")
-        password = str(input("请输入新用户的密码, 默认为 testpassword: ") or "testpassword")
+        # host_id = int(input("这是您的第几个域(host_id)？默认为 1:") or DEFAULT_host)
+        # user_id = str(input("请输入新用户的id, 默认为 testuser: ") or DEFAULT_USER)
+        # user_name = str(input("请输入新用户的名称, 默认为 testuser: ") or DEFAULT_NAME)
+        # password = str(input("请输入新用户的密码, 默认为 testpassword: ") or DEFAULT_PWD)
+        host_id = int(input("Which domain your new user is in(host_id)？ Default is 1:") or DEFAULT_host)
+        user_id = str(input("What is your new user's account, default is testuser: ") or DEFAULT_USER)
+        user_name = str(input("What is your new user's name, default is testuser: ") or DEFAULT_NAME)
+        password = str(input("What is your new user's password, default is testpassword: ") or DEFAULT_PWD)
 
     salt_uuid = uuid.uuid4().hex
 
@@ -189,4 +199,4 @@ if __name__ == '__main__':
             values (%(user_id)s, %(version)s, %(profile_version)s, %(gender)s, %(host)s, %(url)s);"""
             cursor.execute(sql2, vcard_params)
     user_lib.close()
-    print("用户{}创建完成".format(user_id))
+    print("User {} added! ".format(user_id))
