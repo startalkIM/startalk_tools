@@ -221,6 +221,6 @@ fi
 
 case $1 in
   start|stop) "$1" ;;
-  restart) stop; start ;; 
+  restart) stop; sleep 5; start ;; 
 esac
 
